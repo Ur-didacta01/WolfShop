@@ -1,7 +1,7 @@
 {
   "name": "wolfshop",
   "version": "1.0.0",
-  "description": "Tienda virtual de productos de videojuegos",
+  "description": "Tienda virtual de productos de supermercado",
   "main": "server.js",
   "scripts": {
     "start": "node back/server.js",
