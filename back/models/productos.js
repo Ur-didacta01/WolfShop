@@ -44,7 +44,8 @@ const productosSchema=mongoose.Schema({
                 "Electrodomésticos",
                 "Medicamentos",
                 "Víveres",
-                "Tecnología"
+                "Tecnología",
+                "Productos para mascotas"
             ]
         }
     },
