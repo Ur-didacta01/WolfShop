@@ -12,27 +12,7 @@ export const ProductDetails = () => {
   const dispatch= useDispatch();
   const alert=useAlert();
   const [quantity, setQuantity] = useState(1)
-  const consumo={
-    "_id": "6345db1d6165e0dd8a117d71",
-    "nombre": "Nutra gold Gatos 1,5kg",
-    "precio": 68000,
-    "descripcion": "Pienso para gatos adultos, super premium. Alimento balanceado para control de dieta. Alimento holistico",
-    "calificacion": 4.9,
-    "imagen": [
-        {
-            "public_id": "productos/dsvbpny402gelwugv2le",
-            "url": "https://www.agrocampo.com.co/media/catalog/product/cache/d51e0dc10c379a6229d70d752fc46d83/1/1/111110880_ed-min.jpg",
-            "_id": "6346b2bd48574bfefb79eece"
-        }
-    ],
-    "categoria": "Alimentos para mascotas",
-    "vendedor": "Natali Velasquez",
-    "inventario": 50,
-    "numCalificaciones": 32,
-    "opiniones": [],
-    "fechaCreacion": "2022-10-11T21:07:41.110Z",
-    "__v": 0
-}
+
 
 
   useEffect(()=>{
@@ -78,7 +58,7 @@ export const ProductDetails = () => {
               </Carousel>
           </div>
           <div className='col-12 col-lg-5 mt-5'>
-                    <h3>{consumo.nombre}</h3>
+                    <h3>{product.nombre}</h3>
                     <hr />
                     <p id="product_id">ID del producto: {product._id}</p>
                     <hr />

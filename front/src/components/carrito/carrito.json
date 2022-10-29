@@ -1,0 +1,26 @@
+{
+    "item": [
+        {
+            "_id": "6351adf98d69ade268250cf8",
+            "nombre": "Blanqueador regular x 3800ml",
+            "precio": 21000,
+            "imagen": "./images/productos/Blanqueador-Regular-X-3800-ml-865726_b.webp",
+            "inventario": 40
+        },
+        {
+            "_id": "6351b16a8d69ade268250cfb",
+            "nombre": "Detergente liquido fab",
+            "precio": 20000,
+            "imagen": "./images/productos/Detergente_liquido_fab.webp",
+            "inventario": 50
+        },
+        {
+            "_id": "6351b2428d69ade268250cfe",
+            "nombre": "Detergente en polvo ariel",
+            "precio": 25000,
+            "imagen":  "./images/productos/detergente_polvo_ariel_color_6k.jpeg",
+            "inventario": 77
+        }
+    ]
+    
+}
