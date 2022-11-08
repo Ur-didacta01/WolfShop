@@ -12,6 +12,7 @@ import NewProduct from './components/admin/NewProduct';
 import Cart from './components/carrito/Cart';
 
 
+
 function App() {
   return (
     <Router>
@@ -19,12 +20,13 @@ function App() {
       <Header />
       <div className='container container-fluid'>
       <Routes>
-      <Route path="/" element={<Home />}/>
+      <Route path="/" element={<Home />}/>   
       <Route path="/Home" element={<Home />}/>
       <Route path="/producto/:id" element={<ProductDetails />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
       <Route path="/listaProductos" element={<ProductList />}/>
       <Route path="/nuevoProducto" element={<NewProduct />}/>
+      <Route path="/search/:keyword" element={<Home />}/>
       <Route path="/carrito" element={<Cart />}/>
       </Routes>
       </div>
