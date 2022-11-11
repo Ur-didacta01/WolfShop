@@ -3,21 +3,28 @@ const ErrorHandler=require("../utils/errorHandler")
 const catchAsyncErrors=require("../middleware/catchAsyncErrors");
 const { TokenExpiredError } = require("jsonwebtoken");
 const tokenEnviado = require("../utils/jwtToken");
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/sendEmail")
 const crypto = require("crypto")
+const cloudinary= require("cloudinary")
 
 //Registrar un nuevo usuario /api//usuario/registrar
 
 exports.registroUsuario=catchAsyncErrors(async(req, res, next)=>{
     const {nombre, email, password} =req.body;
 
+    const result= await cloudinary.v2.uploader.upload(req.body.avatar, {
+        folder:"avatars",
+        width:240,
+        crop:"scale"
+    })
+
     const user = await User.create({
         nombre,
         email,
         password,
         avatar:{
-            public_id: "20191110",
-            url: "https://png.pngtree.com/png-vector/20191110/ourlarge/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_1978396.jpg"
+            public_id: result.public_id,
+            url: result.secure_url
         }
     })
     const token = user.getJwtToken();
