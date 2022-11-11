@@ -1,16 +1,14 @@
 const User = require("../models/auth")
-const ErrorHandler=require("../utils/errorHandler")
-const catchAsyncErrors=require("../middleware/catchAsyncErrors");
-const { TokenExpiredError } = require("jsonwebtoken");
+const ErrorHandler= require("../utils/errorHandler")
+const catchAsyncErrors= require("../middleware/catchAsyncErrors");
 const tokenEnviado = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail")
 const crypto = require("crypto")
 const cloudinary= require("cloudinary")
 
-//Registrar un nuevo usuario /api//usuario/registrar
-
-exports.registroUsuario=catchAsyncErrors(async(req, res, next)=>{
-    const {nombre, email, password} =req.body;
+//Registrar un nuevo usuario /api/usuario/registro
+exports.registroUsuario= catchAsyncErrors(async (req, res, next) =>{
+    const {nombre, email, password} = req.body;
 
     const result= await cloudinary.v2.uploader.upload(req.body.avatar, {
         folder:"avatars",
@@ -23,39 +21,40 @@ exports.registroUsuario=catchAsyncErrors(async(req, res, next)=>{
         email,
         password,
         avatar:{
-            public_id: result.public_id,
-            url: result.secure_url
+            public_id:result.public_id,
+            url:result.secure_url
         }
     })
-    const token = user.getJwtToken();
-    tokenEnviado(user, 201,res)
-    })
+    tokenEnviado(user,201,res)
+})
 
 
-//Iniciar sesion
+//Iniciar Sesion - Login
 exports.loginUser = catchAsyncErrors(async(req, res, next)=>{
-    const {email, password} = req.body;
+    const { email, password} =  req.body;
 
     //revisar si los campos estan completos
     if (!email || !password){
-        return next(new ErrorHandler("Por favor ingrese email & contraseña, no te cuesta nada :)", 400))
+        return next(new ErrorHandler("Por favor ingrese email & Contraseña", 400))
     }
 
-    //Buscar al usuario en la base de datos
+    //Buscar al usuario en nuestra base de datos
     const user = await User.findOne({email}).select("+password")
-
     if(!user){
-        return next(new ErrorHandler("Email o contraseña inválidos", 401))
+        return next(new ErrorHandler("Email o contraseña invalidos", 401))
     }
 
-    //Chequear la contraseña
-    const contraseñaOK= await user.compararPass(password);
+    //Comparar contraseñas, verificar si está bien
+    const contrasenaOK= await user.compararPass(password);
 
-    if(!contraseñaOK){
-        return next(new ErrorHandler("Contraseña inválida", 401))
+    if (!contrasenaOK){
+        return next(new ErrorHandler("Contraseña invalida",401))
     }
-    tokenEnviado(user, 200,res)
+
+    tokenEnviado(user,200,res)
+
 })
+
 //Cerrar Sesion (logout)
 exports.logOut = catchAsyncErrors(async(req, res, next)=>{
     res.cookie("token",null, {
@@ -68,6 +67,7 @@ exports.logOut = catchAsyncErrors(async(req, res, next)=>{
         message: "Cerró sesión"
     })
 })
+
 //Olvide mi contraseña, recuperar contraseña
 exports.forgotPassword = catchAsyncErrors ( async( req, res, next) =>{
     const user= await User.findOne({email: req.body.email});
@@ -84,12 +84,12 @@ exports.forgotPassword = catchAsyncErrors ( async( req, res, next) =>{
 
     const mensaje=`Hola!\n\nTu link para ajustar una nueva contraseña es el 
     siguiente: \n\n${resetUrl}\n\n
-    Si no solicitaste este link, por favor comunicate con soporte.\n\n Att:\nWolfShop Store`
+    Si no solicitaste este link, por favor comunicate con soporte.\n\n Att:\nVetyShop Store`
 
     try{
         await sendEmail({
             email:user.email,
-            subject: "WolfShop Recuperación de la contraseña",
+            subject: "VetyShop Recuperación de la contraseña",
             mensaje
         })
         res.status(200).json({
@@ -133,8 +133,8 @@ exports.resetPassword = catchAsyncErrors(async (req,res,next) =>{
     tokenEnviado(user, 200, res)
 })
 
-//Ver perfil de usuario (Usuario que está logueado)
-exports.getUserProfile= catchAsyncErrors(async(req, res, next)=>{
+//Ver perfil de usuario (Usuario que esta logueado)
+exports.getUserProfile= catchAsyncErrors( async (req, res, next)=>{
     const user= await User.findById(req.user.id);
 
     res.status(200).json({
@@ -144,18 +144,16 @@ exports.getUserProfile= catchAsyncErrors(async(req, res, next)=>{
 })
 
 
-//Update Comtraseña (usuario logueado)
-exports.updatePassword= catchAsyncErrors(async (req,res, next)=>{
+//Update Contraseña (usuario logueado)
+exports.updatePassword= catchAsyncErrors(async (req, res, next) =>{
     const user= await User.findById(req.user.id).select("+password");
 
     //Revisamos si la contraseña vieja es igual a la nueva
     const sonIguales = await user.compararPass(req.body.oldPassword)
 
-    if(!sonIguales){
+    if (!sonIguales){
         return next (new ErrorHandler("La contraseña actual no es correcta", 401))
     }
-
-
 
     user.password= req.body.newPassword;
     await user.save();
@@ -166,13 +164,13 @@ exports.updatePassword= catchAsyncErrors(async (req,res, next)=>{
 
 //Update perfil de usuario (logueado)
 exports.updateProfile= catchAsyncErrors(async(req,res,next)=>{
-    //Actualizar el email por user a decisión de cada uno
+    //Actualizar el email por user a decisiòn de cada uno
     const newUserData ={
         nombre: req.body.nombre,
         email: req.body.email
     }
 
-    //Updata Avatar: pendiente
+    //updata Avatar: pendiente
 
     const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
         new:true,
@@ -190,8 +188,8 @@ exports.updateProfile= catchAsyncErrors(async(req,res,next)=>{
 //Servicios controladores sobre usuarios por parte de los ADMIN
 
 //Ver todos los usuarios
-exports.getAllUsers= catchAsyncErrors(async(req, res, next)=>{
-    const users=await User.find();
+exports.getAllUsers = catchAsyncErrors(async(req, res, next)=>{
+    const users = await User.find();
 
     res.status(200).json({
         success:true,
@@ -203,19 +201,18 @@ exports.getAllUsers= catchAsyncErrors(async(req, res, next)=>{
 exports.getUserDetails= catchAsyncErrors(async(req, res, next)=>{
     const user= await User.findById(req.params.id);
 
-    if(!user){
-        return next(new ErrorHandler(`No se ha encontrado ningún usuario con el id: ${req.params.id}`))
+    if (!user){
+        return next(new ErrorHandler(`No se ha encontrado ningun usuario con el id: ${req.params.id}`))
     }
 
     res.status(200).json({
         success: true,
         user
-
     })
 })
 
-//Actuaizar perfil de usuario como administrador
-exports.updateUser= catchAsyncErrors(async(req, res, next)=>{
+//Actualizar perfil de usuario (como administrador)
+exports.updateUser= catchAsyncErrors (async(req, res, next)=>{
     const nuevaData={
         nombre: req.body.nombre,
         email: req.body.email,
@@ -229,26 +226,24 @@ exports.updateUser= catchAsyncErrors(async(req, res, next)=>{
     })
 
     res.status(200).json({
-        success: true,
+        success:true,
         user
     })
 })
 
 //Eliminar usuario (admin)
-exports.deleteUser=catchAsyncErrors(async(req, res, next)=>{
-    const user= await User.findById(req.params.id);
+exports.deleteUser= catchAsyncErrors (async (req, res, next)=>{
+    const user = await User.findById(req.params.id);
 
     if(!user){
-        return next(new ErrorHandler(`Usuario con id: ${req.params.id} no se encuentra en nuestra base de datos`))
+        return next(new ErrorHandler(`Usuario con id: ${req.params.id} 
+        no se encuentra en nuestra base de datos`))
     }
 
     await user.remove();
 
     res.status(200).json({
-        success: true,
+        success:true,
         message:"Usuario eliminado correctamente"
     })
 })
-
-
-
